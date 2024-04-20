@@ -11,6 +11,8 @@ import {
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entities';
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Controller('movies') // url의 entry point를 컨트롤한다. 즉, localhost:3000/movies로 접속해야 작동한다.
 export class MoviesController {
@@ -33,8 +35,9 @@ export class MoviesController {
   // http://localhost:3000/movies/search?year=2000 에서 Query로 year로 잡아서 사용이 가능하다.
 
   @Get('/:id')
-  getOne(@Param('id') movieId: string): Movie {
+  getOne(@Param('id') movieId: number): Movie {
     //return `One Movie ID : ${movieId}`;
+    console.log(typeof movieId);
     return this.moviesService.getOne(movieId);
   }
   // 필요하면 먼저 요청해야 한다.
@@ -43,20 +46,21 @@ export class MoviesController {
   // : Movie로 지정하는 것은 Movie를 리턴할 것이라는 것이다.
 
   @Post()
-  create(@Body() movieData) {
+  create(@Body() movieData: CreateMovieDto) {
     //return `This will create a movie data : ${movieData['name']}`;
     return this.moviesService.create(movieData);
   }
   // data를 보낼때는 Body로 받아서 처리하면 된다.
+  //
 
   @Delete('/:id')
-  remove(@Param('id') movieId: string) {
+  remove(@Param('id') movieId: number) {
     //return `This will delete a movie with the id: ${movieId}`;
     return this.moviesService.deleteOne(movieId);
   }
 
   @Patch('/:id')
-  patch(@Param('id') movieId: string, @Body() updateData) {
+  patch(@Param('id') movieId: number, @Body() updateData: UpdateMovieDto) {
     //return `This will patch a movie width the id: ${movieId}`;
     return this.moviesService.update(movieId, updateData);
   }
@@ -65,8 +69,9 @@ export class MoviesController {
   // patch는 멱등성이 없다. 즉 여러번 요청으로 출력값이 변경될 수 있다는 것이다. 카운트가 증가하는 것처럼..
   // data를 같이 보낼때는 Body로 받아서 처리하면 된다.
 
+  // 여기서는 사용하는 코드로, 예시용으로 만들어둔 것이다.
   @Put('/:id')
-  put(@Param('id') movieId: string) {
+  put(@Param('id') movieId: number) {
     return `This will put a movie with the id: ${movieId}`;
   }
   // put은 리소스 전체를 업데이트 할때 사용한다. 특정 정보를 교체할 때 사용하고, 해당 정보가 없으면 새로 생성할 수도 있음

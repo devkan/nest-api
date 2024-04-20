@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Movie } from './entities/movie.entities';
+import { CreateMovieDto } from './dto/create-movie.dto';
+import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Injectable()
 export class MoviesService {
@@ -10,8 +12,8 @@ export class MoviesService {
   }
   // controller의 getAll()에서 호출
 
-  getOne(id: string): Movie {
-    const movie = this.movies.find((movie) => movie.id === +id);
+  getOne(id: number): Movie {
+    const movie = this.movies.find((movie) => movie.id === id);
     // +id는 string을 number로 변환하는 것으로 parseInt(id)와 같다.
 
     if (!movie) {
@@ -21,20 +23,21 @@ export class MoviesService {
     return movie;
   }
 
-  deleteOne(id: string): boolean {
+  deleteOne(id: number): boolean {
     this.getOne(id); // 옵셔널: 해당 ID의 영화가 존재하는지 확인
-    this.movies = this.movies.filter((movie) => movie.id !== +id); // filter로 반환된 배열을 원래 배열에 할당
+    this.movies = this.movies.filter((movie) => movie.id !== id); // filter로 반환된 배열을 원래 배열에 할당
     return true; // 삭제 성공 여부 반환
   }
 
-  create(movieData) {
+  create(movieData: CreateMovieDto) {
     this.movies.push({
       id: this.movies.length + 1,
       ...movieData,
     });
   }
+  // DTO를 받아서 movies 배열에 push하는 것이다.
 
-  update(id: string, updateData) {
+  update(id: number, updateData: UpdateMovieDto) {
     const movie = this.getOne(id);
     this.deleteOne(id);
     this.movies.push({ ...movie, ...updateData });
